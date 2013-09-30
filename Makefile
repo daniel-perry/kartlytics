@@ -10,17 +10,24 @@ ifeq ($(BUILDOS),Darwin)
 	LIBPNG_LDFLAGS  = -L/usr/X11/lib -lpng
 else
 	LIBPNG_CPPFLAGS = -I/opt/local/include
-	LIBPNG_LDFLAGS  = -L/opt/local/lib -R/opt/local/lib -lpng16
+	#LIBPNG_LDFLAGS  = -L/opt/local/lib -R/opt/local/lib -lpng16
+	LIBPNG_LDFLAGS  = -L/opt/local/lib -lpng -lm -lz -lbz2 -lpthread
 endif
 
 ifeq ($(BUILDOS),SunOS)
 	LDFLAGS += -lm
 endif
 
-FFMPEG_CPPFLAGS = -I/usr/local/include 
+#FFMPEG_CPPFLAGS = -I/usr/local/include 
+#FFMPEG_CPPFLAGS += -Wno-deprecated-declarations
+#FFMPEG_LDFLAGS  = -L/usr/local/lib -R/usr/local/lib
+#FFMPEG_LDFLAGS  += -lavformat -lavcodec -lavutil -lswscale
+FFMPEG_LOC = $(HOME)/libs/ffmpeg/ffmpeg
+FFMPEG_CPPFLAGS = -I$(FFMPEG_LOC)/include 
 FFMPEG_CPPFLAGS += -Wno-deprecated-declarations
-FFMPEG_LDFLAGS  = -L/usr/local/lib -R/usr/local/lib
+FFMPEG_LDFLAGS  = -L$(FFMPEG_LOC)/lib
 FFMPEG_LDFLAGS  += -lavformat -lavcodec -lavutil -lswscale
+
 
 KARTVID = out/kartvid
 KART = js/kart.js
@@ -112,11 +119,11 @@ out:
 # kartvid targets
 #
 out/%.o: src/%.c | out
-	$(CC) -c -o $@ $(CFLAGS) $(CPPFLAGS) $(LIBPNG_CPPFLAGS) \
-	    $(FFMPEG_CPPFLAGS) $^
+	$(CC) $^ -c -o $@ $(CFLAGS) $(CPPFLAGS) $(LIBPNG_CPPFLAGS) \
+	    $(FFMPEG_CPPFLAGS) 
 
 $(KARTVID): out/kartvid.o out/img.o out/kv.o out/video.o | out
-	$(CC) -o $@ $(LDFLAGS) $(LIBPNG_LDFLAGS) $(FFMPEG_LDFLAGS) $^
+	$(CC) $^ -o $@ $(LDFLAGS) $(LIBPNG_LDFLAGS) $(FFMPEG_LDFLAGS)
 
 #
 # mask targets

@@ -7,6 +7,7 @@
 #include <err.h>
 #include <stdlib.h>
 #include <strings.h>
+#include <string.h>
 
 #include "kv.h"
 extern int kv_debug;
@@ -108,8 +109,7 @@ kv_init(const char *dirname)
 
 		kmp = &kv_masks[kv_nmasks++];
 		kmp->km_image = mask;
-		(void) strlcpy(kmp->km_name, entp->d_name,
-		    sizeof (kmp->km_name));
+		(void) strncpy(kmp->km_name, entp->d_name, sizeof (kmp->km_name));
 
 		if (kv_debug > 2)
 			(void) printf("bounded [%d, %d] to [%d, %d]\n",
@@ -212,14 +212,14 @@ kv_ident_matches(kv_screen_t *ksp, const char *mask, double score)
 	if (kv_debug > 1)
 		(void) printf("%s matches\n", mask);
 
-	(void) strlcpy(buf, mask, sizeof (buf));
+	(void) strncpy(buf, mask, sizeof (buf));
 
 	if (strncmp(buf, "track_", sizeof ("track_") - 1) == 0) {
 		if (ksp->ks_track[0] != '\0' && ksp->ks_trackscore < score)
 			return;
 
 		(void) strtok(buf + sizeof ("track_"), "_.");
-		(void) strlcpy(ksp->ks_track, buf + sizeof ("track_") - 1,
+		(void) strncpy(ksp->ks_track, buf + sizeof ("track_") - 1,
 		    sizeof (ksp->ks_track));
 		ksp->ks_trackscore = score;
 		return;
@@ -264,7 +264,7 @@ kv_ident_matches(kv_screen_t *ksp, const char *mask, double score)
 		if (square > ksp->ks_nplayers)
 			ksp->ks_nplayers = square;
 
-		(void) strlcpy(kpp->kp_character, buf + sizeof ("char_") - 1,
+		(void) strncpy(kpp->kp_character, buf + sizeof ("char_") - 1,
 		    sizeof (kpp->kp_character));
 		kpp->kp_charscore = score;
 		return;
@@ -669,7 +669,7 @@ kv_vidctx_init(const char *rootdir, kv_emit_f emit, const char *dbgdir,
 	kvp->kv_emit = emit;
 	kvp->kv_flags = flags;
 	if (dbgdir != NULL)
-		(void) strlcpy(kvp->kv_dbgdir, dbgdir, sizeof (kvp->kv_dbgdir));
+		(void) strncpy(kvp->kv_dbgdir, dbgdir, sizeof (kvp->kv_dbgdir));
 	return (kvp);
 }
 

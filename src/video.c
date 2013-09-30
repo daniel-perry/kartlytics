@@ -55,7 +55,7 @@ video_open(const char *filename)
 	tag = av_dict_get(rv->vf_formatctx->metadata, "creation_time",
 	    NULL, AV_DICT_IGNORE_SUFFIX);
 	if (tag != NULL)
-		(void) strlcpy(rv->vf_crtime, tag->value,
+		(void) strncpy(rv->vf_crtime, tag->value,
 		    sizeof (rv->vf_crtime));
 
 	rv->vf_stream = -1;
